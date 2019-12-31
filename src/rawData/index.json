@@ -1,0 +1,59 @@
+{
+  "cities": [
+    {
+      "id": 0,
+      "name": "Mumbai"
+    },
+    {
+      "id": 1,
+      "name": "Gujrat"
+    },
+    {
+      "id": 0,
+      "name": "Goa"
+    }
+  ],
+  "travelMode": [
+    {
+      "id": 0,
+      "name": "train"
+    },
+    {
+      "id": 1,
+      "name": "Bus"
+    },
+    {
+      "id": 0,
+      "name": "Air"
+    }
+  ],
+  "cabTypes": [
+    {
+      "id": 0,
+      "name": "normal"
+    },
+    {
+      "id": 1,
+      "name": "super"
+    },
+    {
+      "id": 0,
+      "name": "deluxe"
+    }
+  ]
+  ,
+  "cabPurpose": [
+    {
+      "id": 0,
+      "name": "normal"
+    },
+    {
+      "id": 1,
+      "name": "super"
+    },
+    {
+      "id": 0,
+      "name": "deluxe"
+    }
+  ]
+}
