@@ -9,7 +9,7 @@
       "name": "Gujrat"
     },
     {
-      "id": 0,
+      "id": 2,
       "name": "Goa"
     }
   ],
@@ -23,7 +23,7 @@
       "name": "Bus"
     },
     {
-      "id": 0,
+      "id": 2,
       "name": "Air"
     }
   ],
@@ -37,7 +37,7 @@
       "name": "super"
     },
     {
-      "id": 0,
+      "id": 2,
       "name": "deluxe"
     }
   ]
@@ -52,8 +52,33 @@
       "name": "super"
     },
     {
-      "id": 0,
+      "id": 2,
       "name": "deluxe"
+    }
+  ]
+  ,
+  "currency": [
+    {
+      "id": 0,
+      "name": "doller"
+    },
+    {
+      "id": 1,
+      "name": "INR"
+    }
+  ],
+  "countries": [
+    {
+      "id": 0,
+      "name": "India"
+    },
+    {
+      "id": 1,
+      "name": "UK"
+    },
+    {
+      "id": 2,
+      "name": "US"
     }
   ]
 }

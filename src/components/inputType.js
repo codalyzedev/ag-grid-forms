@@ -1,18 +1,20 @@
 import React from 'react';
 
-const inputType = ({ type, placeholder, isChecked ,disabled,value,classes}) => {
+const inputType = ({ type, placeholder, checked ,disabled,value,classes ,name,onChange,passRef}) => {
   return (
-    <div>
+   
       <input
         type={type}
         placeholder={placeholder}
-        className="form-control tne__input"
-        checked={isChecked}
+        defaultChecked={checked}
         disabled={disabled}
         value={value}
         className={classes}
+        name={name}
+        onChange={onChange?(Event)=>onChange(Event):()=>{}}
+        ref={passRef}
       />
-    </div>
+
   );
 };
 
