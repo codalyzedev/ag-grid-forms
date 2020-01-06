@@ -4,7 +4,7 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import 'ag-grid-enterprise';
-
+import rawData from '../rawData';
 import GenderCellRenderer from '../components/genderCellRenderer';
 import axios from 'axios';
 class TNE extends Component {
@@ -93,7 +93,11 @@ class TNE extends Component {
           },
           {
             headerName: 'To',
-            field: 'toCity'
+            field: 'toCity',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values:this.state.cityList
+            }
           }
         ]
       },
@@ -103,8 +107,10 @@ class TNE extends Component {
           {
             headerName: 'Mode',
             field: 'travelMode',
-            checkboxSelection: true,
-            onCellValueChanged: param => console.log(param)
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values: rawData.travelMode
+            }
           },
           {
             headerName: 'Class',
@@ -117,7 +123,10 @@ class TNE extends Component {
         children: [
           {
             headerName: 'Date',
-            field: 'arrival_date'
+            field: 'arrival_date',
+            cellRenderer: params =>
+            `<input type="date" value=${params.value} />`,
+          editable: false
           }
         ]
       },
@@ -130,7 +139,11 @@ class TNE extends Component {
           },
           {
             headerName: 'City',
-            field: 'stayCity'
+            field: 'stayCity',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values: this.state.cityList
+            }
           },
           {
             headerName: 'Hotel',

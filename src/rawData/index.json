@@ -13,20 +13,7 @@
       "name": "Goa"
     }
   ],
-  "travelMode": [
-    {
-      "id": 0,
-      "name": "train"
-    },
-    {
-      "id": 1,
-      "name": "Bus"
-    },
-    {
-      "id": 2,
-      "name": "Air"
-    }
-  ],
+  "travelMode": ["train","Bus", "Air"],
   "cabTypes": [
     {
       "id": 0,
