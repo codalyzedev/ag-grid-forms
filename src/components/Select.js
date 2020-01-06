@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Select = ({ options ,classes}) => {
+const Select = ({ options ,classes,name}) => {
   return (
-    <select className={classes}>
+    <select className={classes} name={name}>
       {options.map(option => (
         <option key={option.id}>{option.name}</option>
       ))}
