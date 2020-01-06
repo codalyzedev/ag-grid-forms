@@ -14,34 +14,9 @@
     }
   ],
   "travelMode": ["train","Bus", "Air"],
-  "cabTypes": [
-    {
-      "id": 0,
-      "name": "normal"
-    },
-    {
-      "id": 1,
-      "name": "super"
-    },
-    {
-      "id": 2,
-      "name": "deluxe"
-    }
-  ],
-  "cabPurpose": [
-    {
-      "id": 0,
-      "name": "normal"
-    },
-    {
-      "id": 1,
-      "name": "super"
-    },
-    {
-      "id": 2,
-      "name": "deluxe"
-    }
-  ],
+  "cabTypes": ["normal","super","deluxe"  ],
+  "cabPurpose": ["normal","super","deluxe"  ],
+ 
   "currency": [
     {
       "id": 0,

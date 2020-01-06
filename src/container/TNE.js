@@ -5,7 +5,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import 'ag-grid-enterprise';
 import rawData from '../rawData';
-import GenderCellRenderer from '../components/genderCellRenderer';
+import Input from '../components/inputType'
 import axios from 'axios';
 class TNE extends Component {
   constructor(props) {
@@ -52,11 +52,13 @@ class TNE extends Component {
           visaDetails: false
         }
       ],
-      frameworkComponents: { genderCellRenderer: GenderCellRenderer },
       defaultColDef: {
         editable: true,
         resizable: true
-      }
+      },
+      frameworkComponents: {
+        INPUT: Input
+    }
     };
   }
 
@@ -68,15 +70,19 @@ class TNE extends Component {
           {
             headerName: 'Date',
             field: 'departureDate',
-            cellRenderer: params =>
-              `<input type="date" value=${params.value} />`,
+            cellRenderer: 'INPUT',
+            cellRendererParams: {
+              type: "date"
+          },
             editable: false
           },
           {
             headerName: 'Time',
             field: 'departureTime',
-            cellRenderer: params =>
-              `<input type="time" value=${params.value} />`
+            cellRenderer: 'INPUT',
+            cellRendererParams: {
+              type: "time"
+          },
           }
         ]
       },
@@ -131,11 +137,36 @@ class TNE extends Component {
         ]
       },
       {
+        headerName: 'Cab *',
+        children: [
+          {
+            headerName: 'Type',
+            field: 'cabType',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values: rawData.cabTypes
+            }
+          },
+          {
+            headerName: 'cabPurpose',
+            field: 'cabPurpose',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values:rawData.cabPurpose
+            }
+          }
+        ]
+      },
+      {
         headerName: 'Stay *',
         children: [
           {
             headerName: 'Duration',
-            field: 'duration'
+            field: 'duration',
+            cellRenderer: 'INPUT',
+            cellRendererParams: {
+              type: "number"
+          },
           },
           {
             headerName: 'City',

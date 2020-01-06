@@ -1,6 +1,6 @@
 import React from 'react';
 
-const inputType = ({ type, placeholder, checked ,disabled,value,classes ,name,onChange,passRef}) => {
+const inputType = ({ type, placeholder, checked ,disabled,value,classes ,name,onChange,passRef ,...rest}) => {
   return (
    
       <input
