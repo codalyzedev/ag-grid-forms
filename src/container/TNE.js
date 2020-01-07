@@ -1,64 +1,25 @@
 import React, { Component } from 'react';
-
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import 'ag-grid-enterprise';
 import rawData from '../rawData';
-import Input from '../components/inputType'
+import Input from '../components/inputType';
 import axios from 'axios';
 class TNE extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cityList: [],
-      rowData: [
-        {
-          departureDate: '2020-01-06',
-          departureTime: '13:00',
-          fromCity: 'Savionfurt',
-          toCity: 'Mumbai',
-          travelMode: 'train',
-          travelClass: 'economy',
-          cabType: 'normal',
-          cabPurpose: 'normal',
-          nightsStayCount: '',
-          stayHotelName: '',
-          costCentre: 'normal',
-          budget: 'normal',
-          currencyRequest: 'currencyRequest 1',
-          currency: 'currency 1',
-          amount: 53,
-          passportDetails: {},
-          visaDetails: {}
-        },
-        {
-          departureDate: '2020-01-06',
-          departureTime: '',
-          fromCity: 'Mumbai',
-          toCity: 'Mumbai',
-          travelMode: 'train',
-          travelClass: 'economy',
-          cabType: 'normal',
-          cabPurpose: 'normal',
-          nightsStayCount: '',
-          stayHotelName: '',
-          costCentre: 'normal',
-          budget: 'normal',
-          currencyRequest: false,
-          currency: false,
-          amount: false,
-          passportDetails: false,
-          visaDetails: false
-        }
-      ],
+      rowData: [],
       defaultColDef: {
         editable: true,
-        resizable: true
+        resizable: true,
+        suppressSizeToFit: false
       },
       frameworkComponents: {
         INPUT: Input
-    }
+      }
     };
   }
 
@@ -72,17 +33,18 @@ class TNE extends Component {
             field: 'departureDate',
             cellRenderer: 'INPUT',
             cellRendererParams: {
-              type: "date"
-          },
-            editable: false
+              type: 'date'
+            },
+            editable: false,
+            suppressSizeToFit: true
           },
           {
             headerName: 'Time',
             field: 'departureTime',
             cellRenderer: 'INPUT',
             cellRendererParams: {
-              type: "time"
-          },
+              type: 'time'
+            }
           }
         ]
       },
@@ -102,7 +64,7 @@ class TNE extends Component {
             field: 'toCity',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-              values:this.state.cityList
+              values: this.state.cityList
             }
           }
         ]
@@ -131,8 +93,9 @@ class TNE extends Component {
             headerName: 'Date',
             field: 'arrival_date',
             cellRenderer: params =>
-            `<input type="date" value=${params.value} />`,
-          editable: false
+              `<input type="date" value=${params.value} />`,
+            editable: false,
+            suppressSizeToFit: true
           }
         ]
       },
@@ -152,7 +115,7 @@ class TNE extends Component {
             field: 'cabPurpose',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-              values:rawData.cabPurpose
+              values: rawData.cabPurpose
             }
           }
         ]
@@ -163,10 +126,7 @@ class TNE extends Component {
           {
             headerName: 'Duration',
             field: 'duration',
-            cellRenderer: 'INPUT',
-            cellRendererParams: {
-              type: "number"
-          },
+            onCellValueChanged: this.durationChange
           },
           {
             headerName: 'City',
@@ -178,7 +138,10 @@ class TNE extends Component {
           },
           {
             headerName: 'Hotel',
-            field: 'stayHotelName'
+            field: 'stayHotelName',
+            editable: params => 
+            
+              params.data.duration === "0" ? false : true
           }
         ]
       },
@@ -202,9 +165,22 @@ class TNE extends Component {
   onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+    axios
+      .get('http://5e0e159536b80000143dbaa8.mockapi.io/TNE/')
+      .then(response => {
+        this.setState({ rowData: response.data }, () => {
+          this.gridApi.sizeColumnsToFit();
+        });
+      });
   };
-
-  onAddRow() {
+  durationChange = params => {
+    console.log(params.newValue);
+    if (isNaN(params.newValue)) {
+      let newItem = (params.data.duration = '');
+      this.gridApi.updateRowData({ newItem });
+    }
+  };
+  onAddRow = () => {
     let lastRowIndex = this.gridApi.getLastDisplayedRow();
     let lastRow = this.gridApi.getDisplayedRowAtIndex(lastRowIndex);
     let error = false;
@@ -216,29 +192,27 @@ class TNE extends Component {
       return;
     }
     let newItem = createNewRowData();
-  this.gridApi.updateRowData({ add: [newItem] });
-  
-  }
+    this.gridApi.updateRowData({ add: [newItem] });
+  };
   componentDidMount() {
     axios
       .get('http://5e0e159536b80000143dbaa8.mockapi.io/cities/')
       .then(response => {
         console.log(response.data);
         let cities = response.data.map(data => data.city);
-        this.setState({ cityList: cities });
+        this.setState({ cityList: cities }, () => {
+          this.gridApi.sizeColumnsToFit();
+        });
       })
       .catch(error => {
         console.log(error);
       });
-    //this.setState({})
   }
 
   render() {
-    console.log(this.state);
-
     return (
       <>
-        <button onClick={this.onAddRow.bind(this)}>Add Row</button>
+        <button onClick={this.onAddRow}>Add Row</button>
         <div
           className="ag-theme-balham"
           style={{
