@@ -109,7 +109,8 @@ class TNE extends Component {
             field: 'arrivalDate',
             cellRenderer: 'INPUT',
             cellRendererParams: {
-              type: 'date'
+              type: 'date',
+              onCellValueChanged:this.onCellValueChanged
             },
            
             suppressSizeToFit: true
