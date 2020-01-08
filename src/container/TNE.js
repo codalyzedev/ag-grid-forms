@@ -3,9 +3,17 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import 'ag-grid-enterprise';
-import rawData from '../rawData';
 import Input from '../components/inputType';
 import axios from 'axios';
+import {
+  cabPurpose,
+  cabTypes,
+  budgetCodes,
+  costCenters,
+  travelModes,
+  travelClasses,
+  departure
+} from '../master-data';
 class TNE extends Component {
   constructor(props) {
     super(props);
@@ -19,31 +27,34 @@ class TNE extends Component {
       },
       frameworkComponents: {
         INPUT: Input
-      }
+      },
+      domLayout: "autoHeight"
     };
   }
 
   getColumns = () => {
     const columnDefs = [
       {
-        headerName: 'Departure *',
+        headerName: departure.headerName,
         children: [
           {
-            headerName: 'Date',
-            field: 'departureDate',
-            cellRenderer: 'INPUT',
-            cellRendererParams: {
-              type: 'date'
-            },
-            editable: false,
+            headerName: departure.departureDate.headerName,
+            field: departure.departureDate.field,
+              cellRenderer: 'INPUT',
+              cellRendererParams: {
+                type: 'date',
+                onCellValueChanged:this.onCellValueChanged
+              },
+
             suppressSizeToFit: true
           },
           {
-            headerName: 'Time',
-            field: 'departureTime',
+            headerName: departure.departureTime.headerName,
+            field: departure.departureTime.field,
             cellRenderer: 'INPUT',
             cellRendererParams: {
-              type: 'time'
+              type: 'time',
+              onCellValueChanged:this.onCellValueChanged
             }
           }
         ]
@@ -77,12 +88,16 @@ class TNE extends Component {
             field: 'travelMode',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-              values: rawData.travelMode
+              values: travelModes.map(travelMode => travelMode.displayValue)
             }
           },
           {
             headerName: 'Class',
-            field: 'travelClass'
+            field: 'travelClass',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values: travelClasses
+            }
           }
         ]
       },
@@ -91,10 +106,12 @@ class TNE extends Component {
         children: [
           {
             headerName: 'Date',
-            field: 'arrival_date',
-            cellRenderer: params =>
-              `<input type="date" value=${params.value} />`,
-            editable: false,
+            field: 'arrivalDate',
+            cellRenderer: 'INPUT',
+            cellRendererParams: {
+              type: 'date'
+            },
+           
             suppressSizeToFit: true
           }
         ]
@@ -107,7 +124,7 @@ class TNE extends Component {
             field: 'cabType',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-              values: rawData.cabTypes
+              values: cabTypes
             }
           },
           {
@@ -115,7 +132,7 @@ class TNE extends Component {
             field: 'cabPurpose',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-              values: rawData.cabPurpose
+              values: cabPurpose
             }
           }
         ]
@@ -134,14 +151,13 @@ class TNE extends Component {
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
               values: this.state.cityList
-            }
+            },
+           
           },
           {
             headerName: 'Hotel',
             field: 'stayHotelName',
-            editable: params => 
-            
-              params.data.duration === "0" ? false : true
+            editable: params => (params.data.duration === '0' ? false : true)
           }
         ]
       },
@@ -150,11 +166,19 @@ class TNE extends Component {
         children: [
           {
             headerName: 'Cost Centre',
-            field: 'costCentre'
+            field: 'costCentre',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values: costCenters
+            }
           },
           {
             headerName: 'Budget',
-            field: 'budget'
+            field: 'budget',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+              values: budgetCodes
+            }
           }
         ]
       }
@@ -162,7 +186,7 @@ class TNE extends Component {
     return columnDefs;
   };
 
-  onGridReady = params => {
+  onGridReady = async params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     axios
@@ -180,8 +204,10 @@ class TNE extends Component {
       this.gridApi.updateRowData({ newItem });
     }
   };
+
   onAddRow = () => {
     let lastRowIndex = this.gridApi.getLastDisplayedRow();
+  
     let lastRow = this.gridApi.getDisplayedRowAtIndex(lastRowIndex);
     let error = false;
     if (lastRow) {
@@ -194,7 +220,14 @@ class TNE extends Component {
     let newItem = createNewRowData();
     this.gridApi.updateRowData({ add: [newItem] });
   };
+  keydownHandler = e => {
+    if (e.key === 'b' && e.ctrlKey) {
+      let newItem = createNewRowData();
+      this.gridApi.updateRowData({ add: [newItem] });
+    }
+  };
   componentDidMount() {
+    document.addEventListener('keydown', this.keydownHandler);
     axios
       .get('http://5e0e159536b80000143dbaa8.mockapi.io/cities/')
       .then(response => {
@@ -208,27 +241,58 @@ class TNE extends Component {
         console.log(error);
       });
   }
+  onCellValueChanged=e=>{
+    console.log(e);
+   
+    let url=`http://5e0e159536b80000143dbaa8.mockapi.io/TNE/${e.data.id}`
+    if(e.data.id===undefined){
+      url=`http://5e0e159536b80000143dbaa8.mockapi.io/TNE/`
+      axios
+      .post(url, e.data)
+      .then(response => {
+        console.log(response);
+        let newItem=response.data
+        this.gridApi.updateRowData({ remove:[e.data] });
+        this.gridApi.updateRowData({ add:[newItem] });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    } else{
+      axios
+      .put(url, e.data)
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
+    
+  }
 
   render() {
     return (
-      <>
-        <button onClick={this.onAddRow}>Add Row</button>
-        <div
-          className="ag-theme-balham"
-          style={{
-            height: '500px',
+      <div style={{ height: '100%'}}>
+       
+        <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-balham">
+        <div style={{
+            height: '100%',
             width: '100%'
-          }}
-        >
+          }}>
           <AgGridReact
             columnDefs={this.getColumns()}
             rowData={this.state.rowData}
             frameworkComponents={this.state.frameworkComponents}
             defaultColDef={this.state.defaultColDef}
             onGridReady={this.onGridReady}
-          ></AgGridReact>
+            domLayout={this.state.domLayout}
+            onCellValueChanged={this.onCellValueChanged}
+          />
+           <button onClick={this.onAddRow}>Add Row</button>
         </div>
-      </>
+        </div>
+      </div>
     );
   }
 }

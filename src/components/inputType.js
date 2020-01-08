@@ -1,6 +1,7 @@
 import React from 'react';
 
 const inputType = ({ type, placeholder, checked ,disabled,value,classes ,name,onChange,passRef ,...rest}) => {
+ //console.log(rest);
   return (
    
       <input
@@ -11,7 +12,12 @@ const inputType = ({ type, placeholder, checked ,disabled,value,classes ,name,on
         value={value}
         className={classes}
         name={name}
-        onChange={onChange?(Event)=>onChange(Event):()=>{}}
+        onChange={(Event)=>{
+          console.log(rest)
+        rest.data[rest.colDef.field] = Event.target.value;
+        rest.api.updateRowData({ update:[rest.data] });
+        rest.onCellValueChanged(rest)
+        }}
         ref={passRef}
       />
 
