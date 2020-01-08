@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { AgGridReact } from 'ag-grid-react';
+import { AllModules } from '@ag-grid-enterprise/all-modules';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import 'ag-grid-enterprise';
@@ -18,6 +19,7 @@ class TNE extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      modules: AllModules,
       cityList: [],
       rowData: [],
       defaultColDef: {
@@ -28,7 +30,8 @@ class TNE extends Component {
       frameworkComponents: {
         INPUT: Input
       },
-      domLayout: "autoHeight"
+      domLayout: 'autoHeight',
+      rowSelection: 'multiple'
     };
   }
 
@@ -40,11 +43,11 @@ class TNE extends Component {
           {
             headerName: departure.departureDate.headerName,
             field: departure.departureDate.field,
-              cellRenderer: 'INPUT',
-              cellRendererParams: {
-                type: 'date',
-                onCellValueChanged:this.onCellValueChanged
-              },
+            cellRenderer: 'INPUT',
+            cellRendererParams: {
+              type: 'date',
+              onCellValueChanged: this.onCellValueChanged
+            },
 
             suppressSizeToFit: true
           },
@@ -54,7 +57,7 @@ class TNE extends Component {
             cellRenderer: 'INPUT',
             cellRendererParams: {
               type: 'time',
-              onCellValueChanged:this.onCellValueChanged
+              onCellValueChanged: this.onCellValueChanged
             }
           }
         ]
@@ -110,9 +113,9 @@ class TNE extends Component {
             cellRenderer: 'INPUT',
             cellRendererParams: {
               type: 'date',
-              onCellValueChanged:this.onCellValueChanged
+              onCellValueChanged: this.onCellValueChanged
             },
-           
+
             suppressSizeToFit: true
           }
         ]
@@ -152,8 +155,7 @@ class TNE extends Component {
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
               values: this.state.cityList
-            },
-           
+            }
           },
           {
             headerName: 'Hotel',
@@ -208,7 +210,7 @@ class TNE extends Component {
 
   onAddRow = () => {
     let lastRowIndex = this.gridApi.getLastDisplayedRow();
-  
+
     let lastRow = this.gridApi.getDisplayedRowAtIndex(lastRowIndex);
     let error = false;
     if (lastRow) {
@@ -242,56 +244,62 @@ class TNE extends Component {
         console.log(error);
       });
   }
-  onCellValueChanged=e=>{
+  onCellValueChanged = e => {
     console.log(e);
-   
-    let url=`http://5e0e159536b80000143dbaa8.mockapi.io/TNE/${e.data.id}`
-    if(e.data.id===undefined){
-      url=`http://5e0e159536b80000143dbaa8.mockapi.io/TNE/`
+
+    let url = `http://5e0e159536b80000143dbaa8.mockapi.io/TNE/${e.data.id}`;
+    if (e.data.id === undefined) {
+      url = `http://5e0e159536b80000143dbaa8.mockapi.io/TNE/`;
       axios
-      .post(url, e.data)
-      .then(response => {
-        console.log(response);
-        let newItem=response.data
-        this.gridApi.updateRowData({ remove:[e.data] });
-        this.gridApi.updateRowData({ add:[newItem] });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    } else{
+        .post(url, e.data)
+        .then(response => {
+          console.log(response);
+          let newItem = response.data;
+          this.gridApi.updateRowData({ remove: [e.data] });
+          this.gridApi.updateRowData({ add: [newItem] });
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } else {
       axios
-      .put(url, e.data)
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+        .put(url, e.data)
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
-    
-  }
+  };
 
   render() {
     return (
-      <div style={{ height: '100%'}}>
-       
-        <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-balham">
-        <div style={{
-            height: '100%',
-            width: '100%'
-          }}>
-          <AgGridReact
-            columnDefs={this.getColumns()}
-            rowData={this.state.rowData}
-            frameworkComponents={this.state.frameworkComponents}
-            defaultColDef={this.state.defaultColDef}
-            onGridReady={this.onGridReady}
-            domLayout={this.state.domLayout}
-            onCellValueChanged={this.onCellValueChanged}
-          />
-           <button onClick={this.onAddRow}>Add Row</button>
-        </div>
+      <div style={{ height: '100%' }}>
+        <div
+          style={{ height: 'calc(100% - 25px)' }}
+          className="ag-theme-balham"
+        >
+          <div
+            style={{
+              height: '100%',
+              width: '100%'
+            }}
+          >
+            <AgGridReact
+              modules={this.state.modules}
+              columnDefs={this.getColumns()}
+              rowData={this.state.rowData}
+              frameworkComponents={this.state.frameworkComponents}
+              defaultColDef={this.state.defaultColDef}
+              onGridReady={this.onGridReady}
+              domLayout={this.state.domLayout}
+              onCellValueChanged={this.onCellValueChanged}
+              rowSelection={this.state.rowSelection}
+              enableRangeSelection={true}
+            />
+            <button onClick={this.onAddRow}>Add Row</button>
+          </div>
         </div>
       </div>
     );
