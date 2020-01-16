@@ -192,13 +192,7 @@ class TNE extends Component {
         pinned:'right',
         colId:"22",
         width:300,
-       
-        cellRenderer:params=>{
-          if(params.value!==''){
-            return 'INPUT'
-          }
-        }
-       
+        cellRenderer:params=>this.getButton(params)
          
 
        
@@ -213,11 +207,8 @@ class TNE extends Component {
     axios
       .get('http://5e0e159536b80000143dbaa8.mockapi.io/TNE/')
       .then(response => {
-        response.data=response.data.map(res=>Object.assign(res,{action:''}))
-//console.log(response)
         this.setState({ rowData: response.data }, () => {
           this.gridApi.sizeColumnsToFit();
-          
         });
       });
   };
@@ -280,25 +271,21 @@ getButton=(params)=>{
   }
   onCellValueChanged = e => {
     console.log(e);
-    if(e.oldValue!==e.newValue){
-      e.data.action="sfa"
-      this.gridApi.updateRowData({ update:[e].data });
+    if(e.colDef.colId!=='22'){
+      let isAllowedToAdd=true;
+      let len=this.state.saveButtonOptions.length;
+    if(this.state.saveButtonOptions && len!==0){
+      const isRowExists=this.state.saveButtonOptions.some(row=>row.rowIndex===e.rowIndex)
+      isAllowedToAdd=  isRowExists?false:true
     }
-    // if(e.colDef.colId!=='22'){
-    //   let isAllowedToAdd=true;
-    //   let len=this.state.saveButtonOptions.length;
-    // if(this.state.saveButtonOptions && len!==0){
-    //   const isRowExists=this.state.saveButtonOptions.some(row=>row.rowIndex===e.rowIndex)
-    //   isAllowedToAdd=  isRowExists?false:true
-    // }
-    // if(isAllowedToAdd){
-    //    this.setState({saveButtonOptions:[...this.state.saveButtonOptions,e]},()=>{
-    //     this.gridApi.updateRowData({ update:[e].data });
-    //     console.log(1234)
-    //     this.gridApi.refreshCells({ columns: ["action"] });
-    //    });
-    //   }
-    // }
+    if(isAllowedToAdd){
+       this.setState({saveButtonOptions:[...this.state.saveButtonOptions,e]},()=>{
+        this.gridApi.updateRowData({ update:[e].data });
+        console.log(1234)
+        this.gridApi.refreshCells({ columns: ["action"] });
+       });
+      }
+    }
    
   //  
     // let url = `http://5e0e159536b80000143dbaa8.mockapi.io/TNE/${e.data.id}`;
@@ -335,10 +322,7 @@ getButton=(params)=>{
   
 
   render() {
-    let getCols=this.getColumns()
-   
-    console.log(getCols)
-  //  console.log('df')
+    console.log('df')
     return (
       <div style={{ height: '100%' }}>
     
@@ -354,7 +338,7 @@ getButton=(params)=>{
           >
             <AgGridReact
               modules={this.state.modules}
-              columnDefs={getCols}
+              columnDefs={this.getColumns()}
               rowData={this.state.rowData}
               frameworkComponents={this.state.frameworkComponents}
               defaultColDef={this.state.defaultColDef}
