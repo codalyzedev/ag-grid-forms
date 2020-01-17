@@ -192,12 +192,17 @@ class TNE extends Component {
         pinned:'right',
         colId:"22",
         width:300,
-       
-        cellRenderer:params=>{
-          if(params.value!==''){
-            return 'INPUT'
-          }
-        }
+        cellRenderer: 'INPUT',
+            cellRendererParams: {
+              type: 'button',
+              value:'save'
+           
+            },
+        // cellRenderer:params=>{
+        //   if(params.value!==''){
+        //     return <button>bfhgw</button>
+        //   }
+        // }
        
          
 
