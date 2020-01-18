@@ -21,7 +21,7 @@ class TNE extends Component {
     this.state = {
       modules: AllModules,
       cityList: [],
-      saveButtonOptions:[],
+      saveButtonOptions: [],
       rowData: [],
       defaultColDef: {
         editable: true,
@@ -188,14 +188,14 @@ class TNE extends Component {
       },
       {
         headerName: 'Action',
-        field:"action",
-        pinned:'right',
-        colId:"22",
-        width:300,
-        cellRenderer:params=>this.getButton(params)
-         
+        field: "action",
+        pinned: 'right',
+        colId: "22",
+        width: 300,
+        cellRenderer: params => this.getButton(params)
 
-       
+
+
       }
     ];
     return columnDefs;
@@ -256,38 +256,38 @@ class TNE extends Component {
         console.log(error);
       });
   }
-getButton=(params)=>{
-    if(this.state.saveButtonOptions){
-    
-     let rowData= this.state.saveButtonOptions.find(row=>row.rowIndex===params.rowIndex)
-     console.log(rowData ,this.state)
-      if(rowData){
+  getButton = (params) => {
+    if (this.state.saveButtonOptions) {
+
+      let rowData = this.state.saveButtonOptions.find(row => row.rowIndex === params.rowIndex)
+      console.log(rowData, this.state)
+      if (rowData) {
         console.log('header1')
         this.createButton(rowData)
-        
+
       }
     }
-   
+
   }
   onCellValueChanged = e => {
     console.log(e);
-    if(e.colDef.colId!=='22'){
-      let isAllowedToAdd=true;
-      let len=this.state.saveButtonOptions.length;
-    if(this.state.saveButtonOptions && len!==0){
-      const isRowExists=this.state.saveButtonOptions.some(row=>row.rowIndex===e.rowIndex)
-      isAllowedToAdd=  isRowExists?false:true
-    }
-    if(isAllowedToAdd){
-       this.setState({saveButtonOptions:[...this.state.saveButtonOptions,e]},()=>{
-        this.gridApi.updateRowData({ update:[e].data });
-        console.log(1234)
-        this.gridApi.refreshCells({ columns: ["action"] });
-       });
+    if (e.colDef.colId !== '22') {
+      let isAllowedToAdd = true;
+      let len = this.state.saveButtonOptions.length;
+      if (this.state.saveButtonOptions && len !== 0) {
+        const isRowExists = this.state.saveButtonOptions.some(row => row.rowIndex === e.rowIndex)
+        isAllowedToAdd = isRowExists ? false : true
+      }
+      if (isAllowedToAdd) {
+        this.setState({ saveButtonOptions: [...this.state.saveButtonOptions, e] }, () => {
+          this.gridApi.updateRowData({ update: [e].data });
+          console.log(1234)
+          this.gridApi.refreshCells({ columns: ["action"] });
+        });
       }
     }
-   
-  //  
+
+    //  
     // let url = `http://5e0e159536b80000143dbaa8.mockapi.io/TNE/${e.data.id}`;
     // if (e.data.id === undefined) {
     //   url = `http://5e0e159536b80000143dbaa8.mockapi.io/TNE/`;
@@ -312,20 +312,20 @@ getButton=(params)=>{
     //       console.log(error);
     //     });
     // }
-   
+
   };
 
-  createButton=(data)=> {
-  
+  createButton = (data) => {
+
     return <button >save</button>
   }
-  
+
 
   render() {
     console.log('df')
     return (
       <div style={{ height: '100%' }}>
-    
+
         <div
           style={{ height: 'calc(100% - 25px)' }}
           className="ag-theme-balham"
