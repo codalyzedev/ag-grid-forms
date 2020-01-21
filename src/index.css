@@ -38,3 +38,17 @@ label{
   background-color: aquamarine;
   cursor: pointer;
 }
+.modified{
+
+  animation: App-logo-spin 1 1s linear;
+}
+@keyframes App-logo-spin {
+  from {
+    background-color: rgb(16, 177, 91);
+    
+  }
+  to {
+    
+    
+  }
+}

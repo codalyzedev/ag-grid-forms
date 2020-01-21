@@ -34,10 +34,20 @@ class TNE extends Component {
 				SaveOrRevert
 			},
 			domLayout: "autoHeight",
-			rowSelection: "multiple"
+			rowSelection: "multiple",
+			rowClassRules :{
+				'modified' : this.isEditedRow()
+			 }
+
 		};
 		this.copyOfOldRows = [];
 	}
+
+	 isEditedRow() {
+		return (params) => {
+		   return params.data.edited;
+		}
+	 }
 
 	getColumns = () => {
 		const columnDefs = [
@@ -207,6 +217,7 @@ class TNE extends Component {
 	};
 
 	onGridReady = async params => {
+		this.gridOptions=params;
 		this.gridApi = params.api;
 		this.gridColumnApi = params.columnApi;
 		axios
@@ -297,15 +308,23 @@ class TNE extends Component {
 		let colName = e.colDef.field;
 		let copyData = JSON.parse(JSON.stringify(e.data));
 		copyData[colName] = e.oldValue;
-
+		this.gridApi.rowStyle = {background: 'black'};
+		
 		this.copyOfOldRows = [...this.copyOfOldRows, { ...copyData }];
 		if (e.oldValue !== e.newValue) {
+				
 			e.data.state = "save";
+			e.data.edited = true;
+			
 			//console.log([e.data]);
 			this.gridApi.updateRowData({ update: [e.data] });
 			this.gridApi.redrawRows({ rowNodes: [e.node] });
 		}
 	};
+	// rowStyle=e=>{
+	// 	e.node.rowStyle={background:'black'}
+		
+	// };
 
 	render() {
 		let getCols = this.getColumns();
@@ -333,6 +352,7 @@ class TNE extends Component {
 							onCellValueChanged={this.onCellValueChanged}
 							rowSelection={this.state.rowSelection}
 							enableRangeSelection={true}
+							rowClassRules={this.state.rowClassRules}
 						/>
 						<button onClick={this.onAddRow}>Add Row</button>
 					</div>
