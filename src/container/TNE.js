@@ -217,7 +217,6 @@ class TNE extends Component {
 	};
 
 	onGridReady = async params => {
-		this.gridOptions=params;
 		this.gridApi = params.api;
 		this.gridColumnApi = params.columnApi;
 		axios
@@ -308,7 +307,6 @@ class TNE extends Component {
 		let colName = e.colDef.field;
 		let copyData = JSON.parse(JSON.stringify(e.data));
 		copyData[colName] = e.oldValue;
-		this.gridApi.rowStyle = {background: 'black'};
 		
 		this.copyOfOldRows = [...this.copyOfOldRows, { ...copyData }];
 		if (e.oldValue !== e.newValue) {
@@ -321,10 +319,7 @@ class TNE extends Component {
 			this.gridApi.redrawRows({ rowNodes: [e.node] });
 		}
 	};
-	// rowStyle=e=>{
-	// 	e.node.rowStyle={background:'black'}
-		
-	// };
+
 
 	render() {
 		let getCols = this.getColumns();
